@@ -4,18 +4,21 @@ import "./styles.css";
 import GameBoy from "./components/GameBoy";
 import PokeList from "./components/PokeList";
 import { connect } from 'react-redux'
-import { CLICK } from './store/action'
+import { CLICK, showPokemon, catchPokemon } from './store/action'
 import fetchPokemons from './store/fetchPokemons'
 import Loader from './components/Loader';
 
 // 3. maintenant j'ai accès au store et aux actions comme une prop
-const App = ({handleClick, fetchPokemons, pending}) => {
+const App = ({handleClick, fetchPokemons, pending, showPokemon, pokemons, catchPokemon}) => {
   useEffect(() => {
     fetchPokemons()}, [fetchPokemons]
   )
+  useEffect(() => {
+    console.log(pokemons)}, [pokemons]
+  )
   return (
     <div className="App">
-      <GameBoy />
+      <GameBoy showPokemon={() => {showPokemon(pokemons)}} catchPokemon = {catchPokemon}/>
       {pending ? <Loader/> : <PokeList />}
     </div>
   );
@@ -26,13 +29,17 @@ const App = ({handleClick, fetchPokemons, pending}) => {
 const mapDispatchToProps = dispatch => {
   return ({
     handleClick: () =>  dispatch({ type: CLICK}),
-    fetchPokemons: () => dispatch( fetchPokemons())
+    fetchPokemons: () => dispatch( fetchPokemons()),
+    showPokemon: (pokemons) => dispatch(showPokemon(pokemons)),
+    catchPokemon: () => dispatch( catchPokemon()),
+
   })
 }
 
-const mapStateToProps = ({ pending }) => {
+const mapStateToProps = ({ pending, pokemons }) => {
   return ({
-    pending
+    pending,
+    pokemons
   })
 }
 
